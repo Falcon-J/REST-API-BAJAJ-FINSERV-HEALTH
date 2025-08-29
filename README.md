@@ -1,4 +1,4 @@
-# BFHL REST API - VIT Assignment
+# BFHL REST API 
 
 **Student**: Omkar Umesh Jawalikar  
 **Roll Number**: 22BCE2223  
@@ -6,7 +6,7 @@
 
 ## API Overview
 
-REST API that processes input arrays and categorizes data according to VIT Full Stack question paper requirements.
+REST API that processes input arrays and categorizes data according to Full Stack question requirements.
 
 ## Endpoints
 
