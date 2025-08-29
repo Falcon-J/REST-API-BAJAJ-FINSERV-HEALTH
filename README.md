@@ -51,7 +51,7 @@ Create a `.env` file for local development:
 ```env
 FULL_NAME=your_full_name
 DOB=ddmmyyyy
-EMAIL=your.email@vitstudent.ac.in
+EMAIL=your_email
 ROLL_NUMBER=your_roll_number
 PORT=3000
 ```
