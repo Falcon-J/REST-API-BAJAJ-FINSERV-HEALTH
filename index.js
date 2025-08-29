@@ -1,12 +1,28 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-app.use(express.json());
 
-// Change these to your actual details
-const FULL_NAME = "omkar_umesh_jawalikar"; // lowercase, underscores
-const DOB = "12042004"; // ddmmyyyy
-const EMAIL = "omkarjawaliakar04@gmail.com";
-const ROLL_NUMBER = "22BCE2223";
+// Security middleware
+app.use(express.json({ limit: "10mb" })); // Limit request size
+app.use((req, res, next) => {
+  // CORS headers
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+
+  // Security headers
+  res.header("X-Content-Type-Options", "nosniff");
+  res.header("X-Frame-Options", "DENY");
+  res.header("X-XSS-Protection", "1; mode=block");
+
+  next();
+});
+
+// Environment variables with fallbacks
+const FULL_NAME = process.env.FULL_NAME || "omkar_umesh_jawalikar";
+const DOB = process.env.DOB || "12042004";
+const EMAIL = process.env.EMAIL || "omkar.umesh2022@vitstudent.ac.in";
+const ROLL_NUMBER = process.env.ROLL_NUMBER || "22BCE2223";
 
 function isNumber(str) {
   return /^\d+$/.test(str);
@@ -42,11 +58,28 @@ app.get("/bfhl", (req, res) => {
 
 app.post("/bfhl", (req, res) => {
   try {
+    // Input validation
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({
+        is_success: false,
+        message: "Request body must be a valid JSON object",
+      });
+    }
+
     const data = req.body.data;
     if (!Array.isArray(data)) {
-      return res
-        .status(400)
-        .json({ is_success: false, message: "Invalid input" });
+      return res.status(400).json({
+        is_success: false,
+        message: "Data field must be an array",
+      });
+    }
+
+    // Limit array size for security
+    if (data.length > 1000) {
+      return res.status(400).json({
+        is_success: false,
+        message: "Array size exceeds maximum limit (1000)",
+      });
     }
     let even_numbers = [],
       odd_numbers = [],
@@ -55,6 +88,10 @@ app.post("/bfhl", (req, res) => {
       sum = 0,
       alpha_concat = "";
     for (let item of data) {
+      // Validate each item and limit string length
+      if (typeof item === "string" && item.length > 100) {
+        continue; // Skip overly long strings
+      }
       if (isNumber(item)) {
         if (parseInt(item) % 2 === 0) {
           even_numbers.push(item);
